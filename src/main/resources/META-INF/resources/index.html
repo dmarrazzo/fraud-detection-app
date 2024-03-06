@@ -51,14 +51,14 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="distanceFromLastTransaction">Distance from last transaction</label>
-                <input type="number" class="form-control" id="distanceFromLastTransaction" placeholder="" value="0.31114" required="">
+                <input type="text" class="form-control" id="distanceFromLastTransaction" placeholder="" pattern="[0-9]*(\.)*[0-9]*" value="0.31114" required="">
                 <div class="invalid-feedback">
                   Value number is required.
                 </div>
               </div>
               <div class="col-md-6 mb-3">
                 <label for="ratioToMedianPurchase">Ratio to median purchase</label>
-                <input type="text" class="form-control" id="ratioToMedianPurchase" placeholder="" value="0.5939" required="">
+                <input type="text" class="form-control" id="ratioToMedianPurchase" placeholder="" pattern="[0-9]*(\.)*[0-9]*" value="0.5939" required="">
                 <div class="invalid-feedback">
                   Value number is required.
                 </div>
