@@ -10,11 +10,11 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native-micro -t quarkus/grpc .
+# docker build -f src/main/docker/Dockerfile.native-micro -t quarkus/fraud-detection-app .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/grpc
+# docker run -i --rm -p 8080:8080 quarkus/fraud-detection-app
 #
 ###
 FROM quay.io/quarkus/quarkus-micro-image:2.0
