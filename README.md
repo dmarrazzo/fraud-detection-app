@@ -58,5 +58,5 @@ Easily start your Reactive RESTful Web Services
 ## Deploy OpenShift
 
 ```sh
-mvn -f kafka-consumer/pom.xml package -Dquarkus.kubernetes.deploy=true -DskipTests
+mvn package -Dquarkus.kubernetes.deploy=true -DskipTests
 ```
