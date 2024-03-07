@@ -1,0 +1,154 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: fraud-detection-pipeline
+  labels:
+    app: fraud-app
+spec:
+  params:
+    - default: 'fraud-detection-app'
+      description: application name
+      name: app-name
+      type: string
+    - default: '$(context.pipelineRun.namespace)'
+      description: project name
+      name: project-name
+      type: string
+    - default: 'https://github.com/dmarrazzo/'
+      description: url of the git repo for the code of deployment
+      name: git-url-prefix
+      type: string
+    - default: 'main'
+      description: branch name
+      name: branch-name
+      type: string
+    - default: >-
+        image-registry.openshift-image-registry.svc:5000/$(params.project-name)/$(params.app-name)
+      description: image to be built from the code
+      name: IMAGE
+      type: string
+  workspaces:
+    - name: maven-settings
+    - name: source-workspace
+  tasks:
+    - name: git-clone
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: source-workspace
+      params:
+        - name: url
+          value: '$(params.git-url-prefix)$(params.app-name).git'
+        - name: revision
+          value: $(params.branch-name)
+        - name: submodules
+          value: 'true'
+        - name: depth
+          value: '1'
+        - name: sslVerify
+          value: 'true'
+        - name: crtFileName
+          value: ca-bundle.crt
+        - name: deleteExisting
+          value: 'true'
+        - name: verbose
+          value: 'true'
+        - name: userHome
+          value: /home/git
+    - name: maven
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      workspaces:
+        - name: source
+          workspace: source-workspace
+        - name: maven-settings
+          workspace: maven-settings
+      params:
+        - name: MAVEN_IMAGE
+          value: >-
+            registry.redhat.io/ubi8/openjdk-17:latest
+        - name: GOALS
+          value:
+            - package
+            - -Dmaven.repo.local=$(workspaces.maven-settings.path)
+        - name: MAVEN_MIRROR_URL
+          value: ''
+        - name: SERVER_USER
+          value: ''
+        - name: SERVER_PASSWORD
+          value: ''
+        - name: PROXY_USER
+          value: ''
+        - name: PROXY_PASSWORD
+          value: ''
+        - name: PROXY_PORT
+          value: ''
+        - name: PROXY_HOST
+          value: ''
+        - name: PROXY_NON_PROXY_HOSTS
+          value: ''
+        - name: PROXY_PROTOCOL
+          value: http
+        - name: CONTEXT_DIR
+          value: .
+      runAfter:
+        - git-clone
+    - name: buildah
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: source-workspace
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE)
+        - name: STORAGE_DRIVER
+          value: vfs
+        - name: DOCKERFILE
+          value: src/main/docker/Dockerfile.jvm
+        - name: CONTEXT
+          value: .
+        - name: TLSVERIFY
+          value: 'false'
+        - name: FORMAT
+          value: oci
+        - name: BUILD_EXTRA_ARGS
+          value: ''
+        - name: PUSH_EXTRA_ARGS
+          value: ''
+        - name: SKIP_PUSH
+          value: 'false'
+      runAfter:
+        - maven
+    - name: apply-manifests
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      workspaces:
+        - name: manifest-dir
+          workspace: source-workspace
+        - name: kubeconfig-dir
+          workspace: source-workspace
+      params:
+        - name: SCRIPT
+          value: oc apply -f target/kubernetes/openshift.yml
+        - name: VERSION
+          value: latest
+      runAfter:
+        - buildah
+    - name: image-tag
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      params:
+        - name: SCRIPT
+          value: oc tag $(params.app-name):latest $(params.app-name):1.0.0-SNAPSHOT
+        - name: VERSION
+          value: latest
+      runAfter:
+        - apply-manifests
+  finally: []

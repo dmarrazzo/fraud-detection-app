@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  annotations:
+    chains.tekton.dev/signed: 'true'
+  name: fraud-detection-pipeline-run
+  finalizers:
+    - chains.tekton.dev/pipelinerun
+  labels:
+    tekton.dev/pipeline: fraud-detection-pipeline
+spec:
+  # params:
+  #   - name: git-url
+  #     value: 'https://github.com/dmarrazzo/quarkus-env-config.git'
+  #   - name: IMAGE
+  #     value: >-
+  #       image-registry.openshift-image-registry.svc:5000/dmarrazz-dev/quarkus-env-config
+  pipelineRef:
+    name: fraud-detection-pipeline
+  taskRunTemplate:
+    serviceAccountName: pipeline
+  timeouts:
+    pipeline: 1h0m0s
+  workspaces:
+    - name: maven-settings
+      subPath: maven-repo-cache
+      persistentVolumeClaim:
+        claimName: source-pvc
+    - name: source-workspace
+      subPath: source
+      persistentVolumeClaim:
+        claimName: source-pvc
