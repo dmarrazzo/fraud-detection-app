@@ -14,13 +14,13 @@ spec:
       description: project name
       name: project-name
       type: string
-    - default: 'https://github.com/dmarrazzo/'
+    - default: 'https://github.com/dmarrazzo/$(params.app-name)'
       description: url of the git repo for the code of deployment
-      name: git-url-prefix
+      name: git-url
       type: string
     - default: 'main'
-      description: branch name
-      name: branch-name
+      description: git revision
+      name: git-revision
       type: string
     - default: >-
         image-registry.openshift-image-registry.svc:5000/$(params.project-name)/$(params.app-name)
@@ -40,9 +40,9 @@ spec:
           workspace: source-workspace
       params:
         - name: url
-          value: '$(params.git-url-prefix)$(params.app-name).git'
+          value: '$(params.git-url)'
         - name: revision
-          value: $(params.branch-name)
+          value: $(params.git-revision)
         - name: submodules
           value: 'true'
         - name: depth

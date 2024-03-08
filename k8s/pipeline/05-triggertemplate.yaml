@@ -1,0 +1,41 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: fraud-app-trigger-template
+  labels:
+    app: fraud-app-trigger
+spec:
+  params:
+  - name: git-repo-url
+    description: The git repository url
+  - name: git-revision
+    description: The git revision
+    default: pipelines-1.14
+  - name: git-repo-name
+    description: The name of the deployment to be created / patched
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1
+    kind: PipelineRun
+    metadata:
+      name: trigger-run-$(tt.params.git-revision)
+    spec:
+      pipelineRef:
+        name: fraud-detection-pipeline
+      taskRunTemplate:
+        serviceAccountName: pipeline    
+      params:
+      - name: deployment-name
+        value: $(tt.params.git-repo-name)
+      - name: git-url
+        value: $(tt.params.git-repo-url)
+      - name: git-revision
+        value: $(tt.params.git-revision)
+      workspaces:
+        - name: maven-settings
+          subPath: maven-repo-cache
+          persistentVolumeClaim:
+            claimName: source-pvc
+        - name: source-workspace
+          subPath: source
+          persistentVolumeClaim:
+            claimName: source-pvc

@@ -1,0 +1,26 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: Trigger
+metadata:
+  name: fraud-app-trigger
+  labels:
+    app: fraud-app-trigger
+spec:
+  bindings:
+  - ref: fraud-app-trigger-binding
+  template:
+    ref: fraud-app-trigger-template
+  interceptors:
+    - ref:
+        name: "github"
+      params:
+        - name: "secretRef"
+          value:
+            secretName: github-webhook-secret
+            secretKey: secretToken
+        - name: "eventTypes"
+          value: ["push"]
+    - ref:
+        name: "cel"
+      params:
+        - name: "filter"
+          value: "body.ref.split('/')[2] == 'staging'"

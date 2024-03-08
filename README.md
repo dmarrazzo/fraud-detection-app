@@ -31,15 +31,4 @@ oc apply -f k8s/route.yaml
 
 ## CICD with OpenShift Pipelines
 
-Install the pipeline:
-
-```sh
-oc apply -f k8s/pipeline/01-workspace.yaml
-oc apply -f k8s/pipeline/02-pipeline.yaml
-```
-
-Run the pipeline:
-
-```sh
-oc apply -f k8s/pipeline/03-pipeline-run.yaml
-```
+[pipelines](docs/pipelines.md)

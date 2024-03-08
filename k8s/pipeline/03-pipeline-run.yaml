@@ -9,12 +9,6 @@ metadata:
   labels:
     tekton.dev/pipeline: fraud-detection-pipeline
 spec:
-  # params:
-  #   - name: git-url
-  #     value: 'https://github.com/dmarrazzo/quarkus-env-config.git'
-  #   - name: IMAGE
-  #     value: >-
-  #       image-registry.openshift-image-registry.svc:5000/dmarrazz-dev/quarkus-env-config
   pipelineRef:
     name: fraud-detection-pipeline
   taskRunTemplate:
