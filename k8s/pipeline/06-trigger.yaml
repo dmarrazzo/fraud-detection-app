@@ -3,7 +3,8 @@ kind: Trigger
 metadata:
   name: fraud-app-trigger
   labels:
-    app: fraud-app-trigger
+    app: fraud-app
+    pipeline: trigger
 spec:
   bindings:
   - ref: fraud-app-trigger-binding

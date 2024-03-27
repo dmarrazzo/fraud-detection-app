@@ -3,7 +3,8 @@ kind: TriggerBinding
 metadata:
   name: fraud-app-trigger-binding
   labels:
-    app: fraud-app-trigger
+    app: fraud-app
+    pipeline: trigger
 spec:
   params:
   - name: git-repo-url

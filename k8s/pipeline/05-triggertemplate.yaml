@@ -3,7 +3,8 @@ kind: TriggerTemplate
 metadata:
   name: fraud-app-trigger-template
   labels:
-    app: fraud-app-trigger
+    app: fraud-app
+    pipeline: trigger
 spec:
   params:
   - name: git-repo-url
