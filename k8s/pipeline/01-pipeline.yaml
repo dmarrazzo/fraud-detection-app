@@ -128,6 +128,9 @@ spec:
       taskRef:
         kind: ClusterTask
         name: openshift-client
+      workspaces:
+        - name: manifest-dir
+          workspace: source-workspace
       params:
         - name: SCRIPT
           value: |-
@@ -141,6 +144,9 @@ spec:
       taskRef:
         kind: ClusterTask
         name: openshift-client
+      workspaces:
+        - name: manifest-dir
+          workspace: source-workspace
       params:
         - name: SCRIPT
           value: oc apply -k k8s/
