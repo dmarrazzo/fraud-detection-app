@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ./deployment.yaml
+- ./service.yaml
+- ./route.yaml
+
+commonLabels:
+  app: fraud-app
+  app.kubernetes.io/managed-by: quarkus
+  app.kubernetes.io/name: fraud-detection-app
+  app.kubernetes.io/version: 1.0.0-SNAPSHOT
+  app.openshift.io/runtime: quarkus

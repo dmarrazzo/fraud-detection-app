@@ -14,7 +14,7 @@ spec:
       description: project name
       name: project-name
       type: string
-    - default: 'https://github.com/dmarrazzo/$(params.app-name)'
+    - default: 'https://github.com/dmarrazzo/fraud-detection-app'
       description: url of the git repo for the code of deployment
       name: git-url
       type: string
@@ -23,7 +23,7 @@ spec:
       name: git-revision
       type: string
     - default: >-
-        image-registry.openshift-image-registry.svc:5000/$(params.project-name)/$(params.app-name)
+        image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/fraud-detection-app
       description: image to be built from the code
       name: IMAGE
       type: string
@@ -124,31 +124,28 @@ spec:
           value: 'false'
       runAfter:
         - maven
-    - name: apply-manifests
+    - name: image-stream-set-up
       taskRef:
         kind: ClusterTask
         name: openshift-client
-      workspaces:
-        - name: manifest-dir
-          workspace: source-workspace
-        - name: kubeconfig-dir
-          workspace: source-workspace
       params:
         - name: SCRIPT
-          value: oc apply -f target/kubernetes/openshift.yml
+          value: |-
+            oc replace -f k8s/imagestream.yaml
+            oc tag $(params.app-name):latest $(params.app-name):1.0.0-SNAPSHOT
         - name: VERSION
           value: latest
       runAfter:
         - buildah
-    - name: image-tag
+    - name: apply-manifests
       taskRef:
         kind: ClusterTask
         name: openshift-client
       params:
         - name: SCRIPT
-          value: oc tag $(params.app-name):latest $(params.app-name):1.0.0-SNAPSHOT
+          value: oc apply -k k8s/
         - name: VERSION
           value: latest
       runAfter:
-        - apply-manifests
+        - image-stream-set-up
   finally: []

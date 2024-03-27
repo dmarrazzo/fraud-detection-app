@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-detection-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+      app.kubernetes.io/name: fraud-detection-app
+  template:
+    metadata:
+      labels:
+        app: fraud-app
+        app.kubernetes.io/managed-by: quarkus
+        app.openshift.io/runtime: quarkus
+        app.kubernetes.io/version: 1.0.0-SNAPSHOT
+        app.kubernetes.io/name: fraud-detection-app
+    spec:
+      containers:
+        - env:
+            - name: JAVA_APP_JAR
+              value: /deployments/quarkus-run.jar
+          image: fraud-detection-app:1.0.0-SNAPSHOT
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/live
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: fraud-detection-app
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/ready
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          startupProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /q/health/started
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10

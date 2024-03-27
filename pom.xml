@@ -37,6 +37,7 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-openshift</artifactId>
+      <version>3.2.10.Final-redhat-00003</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
