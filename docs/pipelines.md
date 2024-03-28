@@ -32,6 +32,12 @@ oc apply -f k8s/pipeline/02-workspace-pvc.yaml
 oc apply -f k8s/pipeline/03-pipeline-run.yaml
 ```
 
+Once the pipeline is executed all termined pods can be cleaned:
+
+```sh
+oc delete pods --field-selector=status.phase=Succeeded
+```
+
 ## Automating Pipeline Execution with Triggers
 
 Tekton Triggers provide a powerful mechanism for automating pipeline execution in OpenShift Pipelines.  These four components work together to define when and how a pipeline should run based on specific events.
@@ -83,6 +89,7 @@ oc apply -f k8s/pipeline/07-eventlistener.yaml
 
 * **CEL Expression lenguage reference**
 
+https://github.com/google/cel-go
 https://github.com/tektoncd/triggers/blob/release-v0.26.x/docs/cel_expressions.md
 
 * **Increase the log verbosity to debug issues**
@@ -94,3 +101,6 @@ oc edit cm config-logging -n openshift-pipelines
 ```
 
 https://github.com/tektoncd/triggers/blob/main/docs/troubleshooting.md#configuring-debug-logging-for-eventlisteners
+
+* [An introduction to GitOps](https://www.redhat.com/en/blog/an-introduction-to-gitops)
+* [Filtering tekton trigger operations](https://www.redhat.com/en/blog/filtering-tekton-trigger-operations)
