@@ -12,7 +12,7 @@ A pipeline definition is the blueprint for your automated software delivery proc
 * **Workspaces:** Workspaces provide shared storage for tasks to exchange data. They are defined within the pipeline and referenced by specific tasks. 
 * **Tasks:** These are the individual actions performed within a stage, such as running unit tests, building container images, or deploying your application to OpenShift.
 
-Check the pipeline definition: [01-pipeline.yaml](../k8s/pipeline/01-pipeline.yaml)
+Check the Pipeline definition: [01-pipeline.yaml](../k8s/pipeline/01-pipeline.yaml).
 
 **PipelineRun** represents a single execution or instance of a pipeline definition. It declares:
 
@@ -20,6 +20,8 @@ Check the pipeline definition: [01-pipeline.yaml](../k8s/pipeline/01-pipeline.ya
 * **taskRunTemplate:** defines the execution template for each task within the pipeline. 
 * **timeouts:** establish a maximum allowed runtime for each task within the PipelineRun.  This acts as a safeguard to prevent tasks from hanging indefinitely.  
 * **workspaces:** specifies how workspaces are mapped on the Persistent Volume Claims
+
+Check the PipelineRun definition: [03-pipeline-run.yaml](../k8s/pipeline/03-pipeline-run.yaml).
 
 Since, workspaces relies on Persistent Volume Claim, before lauching the **pipeline run** we define a [PVC](../k8s/pipeline/02-workspace-pvc.yaml).
 
@@ -58,10 +60,10 @@ This component ties everything together.  It defines the specific event that wil
 **Here's how it works in action:**
 
 1. An external event (e.g., Git push) occurs.
-2. The EventListener detects the event and sends the payload to the TriggerBinding.
-3. The TriggerBinding extracts relevant data from the payload.
-4. The Trigger checks if the event matches the defined criteria and, if so, references the TriggerTemplate.
-5. The TriggerTemplate uses the extracted data to create a PipelineRun or TaskRun, launching the pipeline execution.
+2. The [EventListener](../k8s/trigger/07-eventlistener.yaml) detects the event and sends the payload to the TriggerBinding.
+3. The [TriggerBinding](../k8s/trigger/04-triggerbinding.yaml) extracts relevant data from the payload.
+4. The [Trigger](../k8s/trigger/06-trigger.yaml) checks if the event matches the defined criteria and, if so, references the TriggerTemplate.
+5. The [TriggerTemplate](../k8s/trigger/05-triggertemplate.yaml) uses the extracted data to create a PipelineRun or TaskRun, launching the pipeline execution.
 
 This approach allows for a flexible and event-driven way to automate your pipelines.  Pipelines only run when specific events occur, reducing unnecessary executions and streamlining your development workflow.
 
