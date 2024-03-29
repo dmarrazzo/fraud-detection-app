@@ -12,11 +12,7 @@ A pipeline definition is the blueprint for your automated software delivery proc
 * **Workspaces:** Workspaces provide shared storage for tasks to exchange data. They are defined within the pipeline and referenced by specific tasks. 
 * **Tasks:** These are the individual actions performed within a stage, such as running unit tests, building container images, or deploying your application to OpenShift.
 
-Deploy the pipeline definition:
-
-```sh
-oc apply -f k8s/pipeline/01-pipeline.yaml
-```
+Check the pipeline definition: [01-pipeline.yaml](../k8s/pipeline/01-pipeline.yaml)
 
 **PipelineRun** represents a single execution or instance of a pipeline definition. It declares:
 
@@ -25,11 +21,12 @@ oc apply -f k8s/pipeline/01-pipeline.yaml
 * **timeouts:** establish a maximum allowed runtime for each task within the PipelineRun.  This acts as a safeguard to prevent tasks from hanging indefinitely.  
 * **workspaces:** specifies how workspaces are mapped on the Persistent Volume Claims
 
-Since, workspaces relies on Persistent Volume Claim, before lauching the **pipeline run** we define a reusable PVC:
+Since, workspaces relies on Persistent Volume Claim, before lauching the **pipeline run** we define a [PVC](../k8s/pipeline/02-workspace-pvc.yaml).
+
+Deploy everything and run:
 
 ```sh
-oc apply -f k8s/pipeline/02-workspace-pvc.yaml
-oc apply -f k8s/pipeline/03-pipeline-run.yaml
+oc apply -k k8s/pipeline/
 ```
 
 Once the pipeline is executed all termined pods can be cleaned:
@@ -79,28 +76,27 @@ oc create secret generic github-webhook-secret --from-literal=secretToken=<webho
 ### Configure the trigger and the event listener
 
 ```sh
-oc apply -f k8s/pipeline/04-triggerbinding.yaml
-oc apply -f k8s/pipeline/05-triggertemplate.yaml
-oc apply -f k8s/pipeline/06-trigger.yaml
-oc apply -f k8s/pipeline/07-eventlistener.yaml
+oc apply -k k8s/trigger/
 ```
 
 ### Useful information
 
 * **CEL Expression lenguage reference**
 
-https://github.com/google/cel-go
-https://github.com/tektoncd/triggers/blob/release-v0.26.x/docs/cel_expressions.md
+    * https://github.com/google/cel-go
+    * https://github.com/tektoncd/triggers/blob/release-v0.26.x/docs/cel_expressions.md
 
 * **Increase the log verbosity to debug issues**
 
-Change log level:
+    Change log level:
 
-```sh
-oc edit cm config-logging -n openshift-pipelines
-```
+    ```sh
+    oc edit cm config-logging -n openshift-pipelines
+    ```
 
-https://github.com/tektoncd/triggers/blob/main/docs/troubleshooting.md#configuring-debug-logging-for-eventlisteners
+    https://github.com/tektoncd/triggers/blob/main/docs/troubleshooting.md#configuring-debug-logging-for-eventlisteners
 
-* [An introduction to GitOps](https://www.redhat.com/en/blog/an-introduction-to-gitops)
-* [Filtering tekton trigger operations](https://www.redhat.com/en/blog/filtering-tekton-trigger-operations)
+* Blog articles:
+
+    * [An introduction to GitOps](https://www.redhat.com/en/blog/an-introduction-to-gitops)
+    * [Filtering tekton trigger operations](https://www.redhat.com/en/blog/filtering-tekton-trigger-operations)

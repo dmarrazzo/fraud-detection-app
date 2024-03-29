@@ -2,9 +2,6 @@ apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: fraud-app-trigger-binding
-  labels:
-    app: fraud-app
-    pipeline: trigger
 spec:
   params:
   - name: git-repo-url

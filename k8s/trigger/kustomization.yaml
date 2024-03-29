@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ./04-triggerbinding.yaml
+- ./05-triggertemplate.yaml
+- ./06-trigger.yaml
+- ./07-eventlistener.yaml
+- ./08-route.yaml
+
+commonLabels:
+  app: fraud-app-pipeline
+  pipeline: trigger
