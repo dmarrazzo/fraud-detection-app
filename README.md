@@ -22,12 +22,7 @@ You can run your application in dev mode that enables live coding using:
 ```sh
 mvn package -Dquarkus.kubernetes.deploy=true -DskipTests
 ```
-
-Expose the endpoint via encrypted route:
-
-```sh
-oc apply -f k8s/route.yaml
-```
+> **_NOTE:_** Route is configured to expose the application through TLS. Adjust route section in the configuration as your need (`application.properties`).
 
 ## CICD with OpenShift Pipelines
 
